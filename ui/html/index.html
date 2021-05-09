@@ -5,12 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>simple-text-chat</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,700&display=swap" rel="stylesheet"></link>
+    <link rel="stylesheet" href="../css/index.css">
   </head>
   <body>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+    <div class="container">
+      <aside class="active-users-panel" id="active-users-container">
+        <h2>Active users:</h2>
+      </aside>
+      <section class="content-container">
+        <ul class="messages-container" id="messages-container"></ul>
+        <form class="message-form" action="">
+          <input class="message-input" id="message-input" autocomplete="off" /><button class="submit-button" id="submit-button">Send</button>
+        </form>
+      </section>
+    </div>
   </body>
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript" src="../js/index.js"></script>
