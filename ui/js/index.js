@@ -1,7 +1,7 @@
 const socket = io();
 
-const input = document.getElementById("message-input");
-const button = document.getElementById("submit-button");
+const input = document.getElementById("content-container-input");
+const button = document.getElementById("content-container-submit-button");
 
 let clientId = null;
 
@@ -9,29 +9,47 @@ const createUserElement = (socketId) => {
   const activeUserElement = document.createElement("div");
 
   activeUserElement.innerHTML = socketId;
-  activeUserElement.setAttribute("class", "active-user");
+  activeUserElement.setAttribute("class", "users-panel__active-user");
   activeUserElement.setAttribute("id", `user_${socketId}`);
 
   return activeUserElement;
 };
 
 const createMessageElement = (message) => {
-  const activeUserElement = document.createElement("li");
+  const newMessageElement = document.createElement("li");
 
   const isClientMessage = message.socketId === clientId;
 
-  activeUserElement.setAttribute("id", `message_${message.socketId}`);
-  activeUserElement.setAttribute(
+  newMessageElement.setAttribute("id", message.id);
+  newMessageElement.setAttribute(
     "class",
-    isClientMessage ? "client-message" : "chat-message"
+    `content-container__message ${
+      isClientMessage ? "content-container__message--client" : ""
+    }`
   );
-  activeUserElement.innerHTML = `${message.message} ${message.createdAt}`;
 
-  return activeUserElement;
+  const createdAt = new Date(message.createdAt);
+  const formattedDate = `${createdAt.getDate()}/${
+    createdAt.getMonth() + 1
+  }/${createdAt.getFullYear()}`;
+
+  newMessageElement.innerHTML = `
+    <span>
+      <strong>user:</strong> ${message.socketId}
+    </span> <br />
+    <span>
+      <strong>message:</strong> ${message.message}
+    </span> <br />
+    <span>
+      <strong>createdAt:</strong> ${formattedDate}
+    </span>
+  `;
+
+  return newMessageElement;
 };
 
 const updateUserList = (socketIds) => {
-  const activeUserContainer = document.getElementById("active-users-container");
+  const activeUserContainer = document.getElementById("users-panel");
 
   socketIds.forEach((socketId) => {
     const alreadyExistingUser = document.getElementById(`user_${socketId}`);
@@ -47,14 +65,14 @@ const updateMessageList = (messages) => {
   const messagesContainer = document.getElementById("messages-container");
 
   messages.forEach((message) => {
-    const alreadyExistingMessage = document.getElementById(
-      `message_${message.socketId}`
-    );
+    const alreadyExistingMessage = document.getElementById(message.id);
 
     if (!alreadyExistingMessage) {
       const messageContainerEl = createMessageElement(message);
 
       messagesContainer.appendChild(messageContainerEl);
+
+      messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
     }
   });
 };
@@ -88,7 +106,7 @@ button.addEventListener("click", (event) => {
 
   if (input.value) {
     socket.emit("send-message", input.value);
-    
+
     input.value = "";
   }
 });

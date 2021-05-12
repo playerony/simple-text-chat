@@ -1,69 +1,107 @@
+:root {
+  --purple: #c4c6e7;
+  --borders: #463F3A;
+  --background: #E0E0E2;
+  --font-family: "Montserrat", sans-serif;
+}
+
 html, body {
   margin: 0;
   padding: 0;
-  color: #463F3A;
+  color: var(--borders);
   box-sizing: border-box;
-  background-color: #e0e0e2;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-family);
+  background-color: var(--background);
 }
 
 .container {
   display: flex;
+  max-height: 100vh;
   justify-content: space-between;
 }
 
-.active-users-panel {
+
+.users-panel {
   width: 500px;
   height: 100vh;
-  border-right: 1px solid #463F3A;
+  border-right: 1px solid var(--borders);
 }
 
-.active-users-panel > h2 {
+.users-panel__title {
   margin: 0;
   padding: 15px 0;
   padding-left: 30px;
-  border-bottom: 1px solid #463F3A;
+  border-bottom: 1px solid var(--borders);
 }
 
-.active-users-panel > .active-user {
+.users-panel__active-user {
   cursor: default;
   padding: 10px 30px;
-  border-bottom: 1px solid #463F3A;
+  border-bottom: 1px solid var(--borders);
 }
+
 
 .content-container {
   width: 100%;
+  box-sizing: border-box;
 }
 
-.messages-container {
+.content-container__messages-container {
   margin: 0;
-  padding: 0;
+  display: flex;
+  list-style: none;
+  overflow-y: scroll;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 10px 10px 0 10px;
   height: calc(100% - 50px);
 }
 
-.message-form {
+.content-container__message {
+  padding: 5px;
+  padding: 10px;
+  max-width: 500px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  align-self: flex-end;
+  background-color: var(--purple);
+  border: 3px solid var(--borders);
+}
+
+.content-container__message--client {
+  opacity: .7;
+  align-self: flex-start;
+  background-color: white;
+}
+
+.content-container__message > span:not(:first-child) {
+  padding-top: 5px;
+  display: inline-block;
+}
+
+.content-container__form {
   height: 50px;
   padding: 5px;
   display: flex;
   box-sizing: border-box;
-  border-top: 1px solid #463F3A;
+  border-top: 1px solid var(--borders);
 }
 
-.message-input {
+.content-container__input {
   padding: 5px;
   flex-grow: 1;
   font-size: 24px;
   margin-right: 5px;
   border-radius: 4px;
-  border: 1px solid #463F3A;
-  font-family: "Montserrat", sans-serif;
+  font-family: var(--font-family);
+  border: 1px solid var(--borders);
 }
 
-.message-input:focus {
+.content-container__input:focus {
   outline: none;
 }
 
-.submit-button {
+.content-container__submit-button {
   border: 0;
   outline: none;
   font-size: 20px;
@@ -71,11 +109,11 @@ html, body {
   border-radius: 4px;
   transform: scale(1);
   transition: all 300ms;
-  border: 1px solid #463F3A;
-  background-color: #c4c6e7;
-  font-family: "Montserrat", sans-serif;
+  background-color: var(--purple);
+  font-family: var(--font-family);
+  border: 1px solid var(--borders);
 }
 
-.submit-button:hover {
+.content-container__submit-button:hover {
   transform: scale(1.1);
 }

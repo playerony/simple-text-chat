@@ -10,13 +10,16 @@
   </head>
   <body>
     <div class="container">
-      <aside class="active-users-panel" id="active-users-container">
-        <h2>Active users:</h2>
+      <aside class="users-panel" id="users-panel">
+        <h2 class="users-panel__title">
+          Active users:
+        </h2>
       </aside>
       <section class="content-container">
-        <ul class="messages-container" id="messages-container"></ul>
-        <form class="message-form" action="">
-          <input class="message-input" id="message-input" autocomplete="off" /><button class="submit-button" id="submit-button">Send</button>
+        <ul class="content-container__messages-container" id="messages-container"></ul>
+        <form class="content-container__form" action="">
+          <input class="content-container__input" id="content-container-input" autocomplete="off" />
+          <button class="content-container__submit-button" id="content-container-submit-button">Send</button>
         </form>
       </section>
     </div>
