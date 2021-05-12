@@ -102,7 +102,7 @@ const updateUserList = ({ users }) => {
 };
 
 const removeUser = ({ socketId }) => {
-  const elementToRemove = document.getElementById(socketId);
+  const elementToRemove = document.getElementById(`user_${socketId}`);
 
   if (elementToRemove) {
     elementToRemove.remove();
