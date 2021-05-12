@@ -1,39 +1,38 @@
 const socket = io();
 
-const input = document.getElementById("content-container-input");
-const button = document.getElementById("content-container-submit-button");
+const inputElement = document.getElementById("content-container-input");
+const buttonElement = document.getElementById(
+  "content-container-submit-button"
+);
 
 let clientId = null;
 
-const createUserElement = (socketId) => {
-  const activeUserElement = document.createElement("div");
+const classNames = (...classNames) => {
+  if (!classNames) {
+    return "";
+  }
 
-  activeUserElement.innerHTML = socketId;
-  activeUserElement.setAttribute("class", "users-panel__active-user");
-  activeUserElement.setAttribute("id", `user_${socketId}`);
+  if (Array.isArray(classNames)) {
+    return classNames.filter(Boolean).join(" ");
+  }
 
-  return activeUserElement;
+  return String(classNames);
 };
 
-const createMessageElement = (message) => {
-  const newMessageElement = document.createElement("li");
-
-  const isClientMessage = message.socketId === clientId;
-
-  newMessageElement.setAttribute("id", message.id);
-  newMessageElement.setAttribute(
-    "class",
-    `content-container__message ${
-      isClientMessage ? "content-container__message--client" : ""
-    }`
-  );
-
+const getMessageContent = (message) => {
   const createdAt = new Date(message.createdAt);
-  const formattedDate = `${createdAt.getDate()}/${
-    createdAt.getMonth() + 1
-  }/${createdAt.getFullYear()}`;
 
-  newMessageElement.innerHTML = `
+  const day = createdAt.getDate();
+  const year = createdAt.getFullYear();
+  const month = createdAt.getMonth() + 1;
+
+  const hours = createdAt.getHours();
+  const minutes = createdAt.getMinutes();
+  const seconds = createdAt.getSeconds();
+
+  const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+
+  return `
     <span>
       <strong>user:</strong> ${message.socketId}
     </span> <br />
@@ -44,40 +43,65 @@ const createMessageElement = (message) => {
       <strong>createdAt:</strong> ${formattedDate}
     </span>
   `;
+};
+
+const createMessageElement = (message) => {
+  const newMessageElement = document.createElement("li");
+
+  const isClientMessage = message.socketId === clientId;
+  const newMessageElementClass = classNames(
+    "content-container__message",
+    isClientMessage && "content-container__message--client"
+  );
+
+  newMessageElement.setAttribute("id", message.id);
+  newMessageElement.setAttribute("class", newMessageElementClass);
+
+  const newMessageContent = getMessageContent(message);
+  newMessageElement.innerHTML = newMessageContent;
 
   return newMessageElement;
 };
 
-const updateUserList = (socketIds) => {
-  const activeUserContainer = document.getElementById("users-panel");
-
-  socketIds.forEach((socketId) => {
-    const alreadyExistingUser = document.getElementById(`user_${socketId}`);
-    if (!alreadyExistingUser) {
-      const userContainerEl = createUserElement(socketId);
-
-      activeUserContainer.appendChild(userContainerEl);
-    }
-  });
-};
-
-const updateMessageList = (messages) => {
+const updateMessageList = ({ messages }) => {
   const messagesContainer = document.getElementById("messages-container");
 
   messages.forEach((message) => {
     const alreadyExistingMessage = document.getElementById(message.id);
 
     if (!alreadyExistingMessage) {
-      const messageContainerEl = createMessageElement(message);
+      const newMessageElement = createMessageElement(message);
 
-      messagesContainer.appendChild(messageContainerEl);
-
-      messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
+      messagesContainer.appendChild(newMessageElement);
+      messagesContainer.scrollTo(0, messagesContainer.scrollHeight);
     }
   });
 };
 
-const removeUser = (socketId) => {
+const createUserElement = (socketId) => {
+  const activeUserElement = document.createElement("div");
+
+  activeUserElement.innerHTML = socketId;
+  activeUserElement.setAttribute("id", `user_${socketId}`);
+  activeUserElement.setAttribute("class", "users-panel__active-user");
+
+  return activeUserElement;
+};
+
+const updateUserList = ({ users }) => {
+  const usersPanelContainer = document.getElementById("users-panel");
+
+  users.forEach((socketId) => {
+    const alreadyExistingUser = document.getElementById(`user_${socketId}`);
+    if (!alreadyExistingUser) {
+      const newUserElement = createUserElement(socketId);
+
+      usersPanelContainer.appendChild(newUserElement);
+    }
+  });
+};
+
+const removeUser = ({ socketId }) => {
   const elementToRemove = document.getElementById(socketId);
 
   if (elementToRemove) {
@@ -85,28 +109,21 @@ const removeUser = (socketId) => {
   }
 };
 
-socket.on("get-client-id", ({ socketId }) => {
+const setClientId = ({ socketId }) => {
   clientId = socketId;
-});
+};
 
-socket.on("update-user-list", ({ users }) => {
-  updateUserList(users);
-});
+socket.on("remove-user", removeUser);
+socket.on("get-client-id", setClientId);
+socket.on("update-user-list", updateUserList);
+socket.on("update-message-list", updateMessageList);
 
-socket.on("remove-user", ({ socketId }) => {
-  removeUser(socketId);
-});
-
-socket.on("update-message-list", ({ messages }) => {
-  updateMessageList(messages);
-});
-
-button.addEventListener("click", (event) => {
+buttonElement.addEventListener("click", (event) => {
   event.preventDefault();
 
-  if (input.value) {
-    socket.emit("send-message", input.value);
+  if (inputElement.value) {
+    socket.emit("send-message", inputElement.value);
 
-    input.value = "";
+    inputElement.value = "";
   }
 });
