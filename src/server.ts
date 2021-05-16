@@ -51,15 +51,17 @@ export class Server {
     });
 
     this.io.on("connection", (socket) => {
+      const socketId = socket.id
+
       const activeSocket = this.activeSockets.find(
-        (_activeSocket) => _activeSocket === socket.id
+        (_activeSocket) => _activeSocket === socketId
       );
 
       if (!activeSocket) {
-        this.activeSockets.push(socket.id);
+        this.activeSockets.push(socketId);
 
         socket.emit("get-client-id", {
-          socketId: socket.id,
+          socketId,
         });
 
         socket.emit("update-message-list", {
@@ -68,12 +70,12 @@ export class Server {
 
         socket.emit("update-user-list", {
           users: this.activeSockets.filter(
-            (existingSocket) => existingSocket !== socket.id
+            (_activeSocket) => _activeSocket !== socketId
           ),
         });
 
         socket.broadcast.emit("update-user-list", {
-          users: [socket.id],
+          users: [socketId],
         });
       }
 
@@ -82,14 +84,14 @@ export class Server {
           type,
           socket,
           payload,
-          socketId: socket.id,
+          socketId,
         });
       });
 
       socket.on("disconnect", () => {
         handlers.handle({
           socket,
-          socketId: socket.id,
+          socketId,
           type: DisconnectHandler.TYPE,
         });
       });

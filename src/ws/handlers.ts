@@ -1,11 +1,20 @@
-export class Handlers {
-  private handlers: any;
+import { HandlerMessage } from '../type/HandlerMessage'
 
-  constructor(handlers: any) {
+import { DisconnectHandler } from './handler/disconnect.handler'
+import { SendMessageHandler } from './handler/send-message.handler'
+
+interface HandlersType {
+  [key: string]: DisconnectHandler | SendMessageHandler
+}
+
+export class Handlers {
+  private handlers: HandlersType;
+
+  constructor(handlers: HandlersType) {
     this.handlers = handlers;
   }
 
-  handle(message: any) {
+  handle(message: HandlerMessage) {
     if (!this.handlers[message.type]) {
       throw new Error("No handler for message");
     }

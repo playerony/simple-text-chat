@@ -1,4 +1,5 @@
-import { Message } from "./../../model/message";
+import { Message } from "../../model/message";
+import { HandlerMessage } from '../../type/HandlerMessage'
 
 export class SendMessageHandler {
   public static TYPE = "send-message";
@@ -8,7 +9,7 @@ export class SendMessageHandler {
     this.messages = messages;
   }
 
-  handle({ socket, payload, socketId }: any) {
+  handle({ socket, payload, socketId }: HandlerMessage) {
     const newMessage = new Message(socketId, payload);
     this.messages.push(newMessage);
 
